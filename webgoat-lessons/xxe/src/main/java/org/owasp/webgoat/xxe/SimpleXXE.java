@@ -37,12 +37,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
-import java.util.Random;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -76,7 +74,7 @@ public class SimpleXXE extends AssignmentEndpoint {
         		secure = true;
         	}
             Comment comment = comments.parseXml(commentStr, secure);
-            System.err.println("Comment " + comment);
+            //System.err.println("Comment " + comment);
             comments.addComment(comment, false);
             if (checkSolution(comment)) {
                 return success(this).build();
