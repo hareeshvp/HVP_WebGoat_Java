@@ -34,14 +34,15 @@ public class WebGoatUser implements UserDetails {
     }
 
     public WebGoatUser(String username, String password) {
-        this(username, password, ROLE_USER);
+        this.username = username;
+        this.password = password;
+        createUser();
     }
 
     public WebGoatUser(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
-        createUser();
     }
 
 

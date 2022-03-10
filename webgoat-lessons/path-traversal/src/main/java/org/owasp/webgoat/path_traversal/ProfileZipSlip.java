@@ -7,12 +7,14 @@ import org.owasp.webgoat.session.WebSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -43,21 +45,22 @@ public class ProfileZipSlip extends ProfileUploadBase {
 
     @SneakyThrows
     private AttackResult processZipUpload(MultipartFile file) {
-        var tmpZipDirectory = Files.createTempDirectory(getWebSession().getUserName());
+        var tmpZipDirectory = new File(getWebGoatHomeDirectory(), "/PathTraversal/zip-slip/" + getWebSession().getUserName());
         var uploadDirectory = new File(getWebGoatHomeDirectory(), "/PathTraversal/" + getWebSession().getUserName());
-        var currentImage = getProfilePictureAsBase64();
-
+        FileSystemUtils.deleteRecursively(uploadDirectory);
+        Files.createDirectories(tmpZipDirectory.toPath());
         Files.createDirectories(uploadDirectory.toPath());
+        byte[] currentImage = getProfilePictureAsBase64();
 
         try {
-            var uploadedZipFile = tmpZipDirectory.resolve(file.getOriginalFilename());
-            FileCopyUtils.copy(file.getBytes(), uploadedZipFile.toFile());
+            var uploadedZipFile = new File(tmpZipDirectory, file.getOriginalFilename());
+            FileCopyUtils.copy(file.getBytes(), uploadedZipFile);
 
-            ZipFile zip = new ZipFile(uploadedZipFile.toFile());
+            ZipFile zip = new ZipFile(uploadedZipFile);
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry e = entries.nextElement();
-                File f = new File(tmpZipDirectory.toFile(), e.getName());
+                File f = new File(uploadDirectory, e.getName());
                 InputStream is = zip.getInputStream(e);
                 Files.copy(is, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }

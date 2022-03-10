@@ -83,7 +83,11 @@ public class BlindSendFileAssignment extends AssignmentEndpoint {
         }
 
         try {
-            Comment comment = comments.parseXml(commentStr);
+        	boolean secure = false;
+        	if (null != request.getSession().getAttribute("applySecurity")) {
+        		secure = true;
+        	}
+            Comment comment = comments.parseXml(commentStr, secure);
             if (CONTENTS.contains(comment.getText())) {
                 comment.setText("Nice try, you need to send the file to WebWolf");
             }

@@ -24,10 +24,10 @@ package org.owasp.webgoat.insecure_login;
 
 import org.owasp.webgoat.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.assignments.AttackResult;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class InsecureLoginTask extends AssignmentEndpoint {
@@ -35,15 +35,9 @@ public class InsecureLoginTask extends AssignmentEndpoint {
     @PostMapping("/InsecureLogin/task")
     @ResponseBody
     public AttackResult completed(@RequestParam String username, @RequestParam String password) {
-    	if ("CaptainJack".equals(username) && "BlackPearl".equals(password)) {
+    	if (username.toString().equals("CaptainJack") && password.toString().equals("BlackPearl")) {
     		return success(this).build();
     	}
         return failed(this).build();
-    }
-
-    @PostMapping("/InsecureLogin/login")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void login() {
-        //only need to exists as the JS needs to call an existing endpoint
     }
 }
