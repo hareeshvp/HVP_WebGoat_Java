@@ -1,0 +1,3 @@
+cov-build --dir idir --fs-capture-search . mvn clean install -DskipTests
+cov-analyze --dir idir --strip-path `pwd` --all --webapp-security --disable-default --disable-fb
+cov-commit-defects --dir idir --url https://url.com --stream HVP_WebGoat_Java --user <username> --password <password>
