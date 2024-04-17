@@ -1,3 +1,3 @@
 cov-build --dir idir --fs-capture-search . mvn clean install -DskipTests
-cov-analyze --dir idir --strip-path `pwd` --all --webapp-security --disable-default --disable-fb
-cov-commit-defects --dir idir --url https://url.com --stream HVP_WebGoat_Java --user <username> --password <password>
+cov-analyze --dir idir --strip-path `pwd` --all-security --disable-default --disable-fb
+cov-commit-defects --dir idir --url https://testing.coverity.synopsys.com --stream HVP_WebGoat_Java --auth-key-file /Users/hareeshv/Documents/SIG_License/auth-key.txt or --user <username> --password <password>
