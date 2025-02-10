@@ -1,3 +1,9 @@
+COV
 cov-build --dir idir --fs-capture-search . mvn clean install -DskipTests
 cov-analyze --dir idir --strip-path `pwd` --all-security --disable-default --disable-fb
 cov-commit-defects --dir idir --url https://server.com --stream HVP_WebGoat_Java --auth-key-file /Users/hareeshv/Documents/SIG_License/auth-key.txt or --user <username> --password <password>
+
+COP
+polaris --persist-config --co analyze.coverity.cov-analyze='["--all", "--webapp-security"]' --co project='{"branch":"main", "name":"HVP_WebGoat_Java_COP"}' --co capture.build.cleanCommands=‘[{“shell”:[“mvn”,“clean”]}]’ --co capture.build.buildCommands=‘[{“shell”:[“mvn”,“clean”, “install”, “-DskipTests”]}]’ -c polaris.yml analyze -w
+
+POL
