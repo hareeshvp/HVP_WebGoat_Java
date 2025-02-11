@@ -7,3 +7,4 @@ COP
 polaris --persist-config --co analyze.coverity.cov-analyze='["--all", "--webapp-security"]' --co project='{"branch":"main", "name":"HVP_WebGoat_Java_COP"}' --co capture.build.cleanCommands=‘[{“shell”:[“mvn”,“clean”]}]’ --co capture.build.buildCommands=‘[{“shell”:[“mvn”,“clean”, “install”, “-DskipTests”]}]’ -c polaris.yml analyze -w
 
 POL
+bridge-cli --stage polaris polaris.assessment.types=SAST polaris.project.name="HVP_WebGoat_Java_Polaris" polaris.application.name="HVP_Testing_Application" polaris.branch.name="main" polaris.serverUrl="$POLARIS_URL" polaris.accessToken="$POLARIS_TOKEN" coverity.clean.command="mvn clean" coverity.build.command="mvn clean install -DskipTests"
