@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2019 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.integration;
 
 import io.restassured.RestAssured;
@@ -24,12 +28,12 @@ public class ProgressRaceConditionIntegrationTest extends IntegrationTest {
     Callable<Response> call =
         () -> {
           // System.out.println("thread "+Thread.currentThread().getName());
-          return RestAssured.given()
+            return RestAssured.given()
               .when()
               .relaxedHTTPSValidation()
               .cookie("JSESSIONID", getWebGoatCookie())
               .formParams(Map.of("flag", "test"))
-              .post(url("challenge/flag/1"));
+              .post(webGoatUrlConfig.url("challenge/flag/1"));
         };
     ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_PARALLEL_THREADS);
     List<? extends Callable<Response>> flagCalls =

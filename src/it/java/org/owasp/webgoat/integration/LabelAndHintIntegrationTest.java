@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2022 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.integration;
 
 import io.restassured.RestAssured;
@@ -17,14 +21,14 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
   @Test
   public void testSingleLabel() {
     Assertions.assertTrue(true);
-    JsonPath jsonPath =
+      JsonPath jsonPath =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .contentType(ContentType.JSON)
             .header("Accept-Language", "en")
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("service/labels.mvc"))
+            .get(webGoatUrlConfig.url("service/labels.mvc"))
             .then()
             .statusCode(200)
             .extract()
@@ -35,14 +39,14 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
         jsonPath.getString(ESCAPE_JSON_PATH_CHAR + "http-basics.close" + ESCAPE_JSON_PATH_CHAR));
 
     // check if lang parameter overrules Accept-Language parameter
-    jsonPath =
+      jsonPath =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .contentType(ContentType.JSON)
             .header("Accept-Language", "en")
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("service/labels.mvc?lang=nl"))
+            .get(webGoatUrlConfig.url("service/labels.mvc?lang=nl"))
             .then()
             .statusCode(200)
             .extract()
@@ -51,14 +55,14 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
         "Gebruikersnaam",
         jsonPath.getString(ESCAPE_JSON_PATH_CHAR + "username" + ESCAPE_JSON_PATH_CHAR));
 
-    jsonPath =
+      jsonPath =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .contentType(ContentType.JSON)
             .header("Accept-Language", "en")
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("service/labels.mvc?lang=de"))
+            .get(webGoatUrlConfig.url("service/labels.mvc?lang=de"))
             .then()
             .statusCode(200)
             .extract()
@@ -68,14 +72,14 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
         jsonPath.getString(ESCAPE_JSON_PATH_CHAR + "username" + ESCAPE_JSON_PATH_CHAR));
 
     // check if invalid language returns english
-    jsonPath =
+      jsonPath =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .contentType(ContentType.JSON)
             .header("Accept-Language", "nl")
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("service/labels.mvc?lang=xx"))
+            .get(webGoatUrlConfig.url("service/labels.mvc?lang=xx"))
             .then()
             .statusCode(200)
             .extract()
@@ -84,14 +88,14 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
         "Username", jsonPath.getString(ESCAPE_JSON_PATH_CHAR + "username" + ESCAPE_JSON_PATH_CHAR));
 
     // check if invalid language returns english
-    jsonPath =
+      jsonPath =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .contentType(ContentType.JSON)
             .header("Accept-Language", "xx_YY")
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("service/labels.mvc"))
+            .get(webGoatUrlConfig.url("service/labels.mvc"))
             .then()
             .statusCode(200)
             .extract()
@@ -196,14 +200,14 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
   }
 
   private JsonPath getLabels(String lang) {
-    return RestAssured.given()
+      return RestAssured.given()
         .when()
         .relaxedHTTPSValidation()
         .contentType(ContentType.JSON)
         .header("Accept-Language", lang)
         .cookie("JSESSIONID", getWebGoatCookie())
         // .log().headers()
-        .get(url("service/labels.mvc"))
+        .get(webGoatUrlConfig.url("service/labels.mvc"))
         .then()
         // .log().all()
         .statusCode(200)
@@ -212,13 +216,13 @@ public class LabelAndHintIntegrationTest extends IntegrationTest {
   }
 
   private List<String> getHints() {
-    JsonPath jsonPath =
+      JsonPath jsonPath =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .contentType(ContentType.JSON)
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("service/hint.mvc"))
+            .get(webGoatUrlConfig.url("service/hint.mvc"))
             .then()
             // .log().all()
             .statusCode(200)

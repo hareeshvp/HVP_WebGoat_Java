@@ -1,4 +1,8 @@
-package org.owasp.webgoat.playwright.webgoat;
+/*
+ * SPDX-FileCopyrightText: Copyright © 2025 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+package org.owasp.webgoat.playwright.webgoat.lessons;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -11,8 +15,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.owasp.webgoat.container.lessons.LessonName;
+import org.owasp.webgoat.playwright.webgoat.PlaywrightTest;
 import org.owasp.webgoat.playwright.webgoat.helpers.Authentication;
-import org.owasp.webgoat.playwright.webgoat.pages.HttpBasicsLessonPage;
+import org.owasp.webgoat.playwright.webgoat.pages.lessons.HttpBasicsLessonPage;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HttpBasicsLessonUITest extends PlaywrightTest {
@@ -61,5 +66,19 @@ public class HttpBasicsLessonUITest extends PlaywrightTest {
     lessonPage.getGoButton().click();
 
     assertThat(lessonPage.getAssignmentOutput()).containsText("Try again, name cannot be empty.");
+  }
+
+  @Test
+  @Order(4)
+  @DisplayName(
+      "Given Sylvester solves the first assignment when Tweety logs in then the first assignment should NOT be solved")
+  void shouldNotSolvePage1(Browser browser) {
+    lessonPage.navigateTo(2);
+    lessonPage.getEnterYourName().fill("John Doe");
+    lessonPage.getGoButton().click();
+
+    var tweetyLessonPage = new HttpBasicsLessonPage(Authentication.tweety(browser));
+    tweetyLessonPage.open(new LessonName("HttpBasics"));
+    Assertions.assertThat(tweetyLessonPage.noAssignmentsCompleted()).isTrue();
   }
 }

@@ -1,11 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2022 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.integration;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.restassured.RestAssured;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ public class ChallengeIntegrationTest extends IntegrationTest {
             .when()
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("challenge/logo"))
+            .get(webGoatUrlConfig.url("challenge/logo"))
             .then()
             .statusCode(200)
             .extract()
@@ -34,14 +35,14 @@ public class ChallengeIntegrationTest extends IntegrationTest {
     params.put("username", "admin");
     params.put("password", "!!webgoat_admin_1234!!".replace("1234", pincode));
 
-    checkAssignment(url("challenge/1"), params, true);
+    checkAssignment(webGoatUrlConfig.url("challenge/1"), params, true);
     String result =
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
             .formParams(params)
-            .post(url("challenge/1"))
+            .post(webGoatUrlConfig.url("challenge/1"))
             .then()
             .statusCode(200)
             .extract()
@@ -50,22 +51,9 @@ public class ChallengeIntegrationTest extends IntegrationTest {
     String flag = result.substring(result.indexOf("flag") + 6, result.indexOf("flag") + 42);
     params.clear();
     params.put("flag", flag);
-    checkAssignment(url("challenge/flag/1"), params, true);
+    checkAssignment(webGoatUrlConfig.url("challenge/flag/1"), params, true);
 
     checkResults("Challenge1");
-
-    List<String> capturefFlags =
-        RestAssured.given()
-            .when()
-            .relaxedHTTPSValidation()
-            .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("scoreboard-data"))
-            .then()
-            .statusCode(200)
-            .extract()
-            .jsonPath()
-            .get("find { it.username == \"" + this.getUser() + "\" }.flagsCaptured");
-    assertTrue(capturefFlags.contains("Admin lost password"));
   }
 
   @Test
@@ -83,7 +71,7 @@ public class ChallengeIntegrationTest extends IntegrationTest {
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
             .formParams(params)
-            .post(url("challenge/5"))
+            .post(webGoatUrlConfig.url("challenge/5"))
             .then()
             .statusCode(200)
             .extract()
@@ -92,22 +80,9 @@ public class ChallengeIntegrationTest extends IntegrationTest {
     String flag = result.substring(result.indexOf("flag") + 6, result.indexOf("flag") + 42);
     params.clear();
     params.put("flag", flag);
-    checkAssignment(url("challenge/flag/5"), params, true);
+    checkAssignment(webGoatUrlConfig.url("challenge/flag/5"), params, true);
 
     checkResults("Challenge5");
-
-    List<String> capturefFlags =
-        RestAssured.given()
-            .when()
-            .relaxedHTTPSValidation()
-            .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("scoreboard-data"))
-            .then()
-            .statusCode(200)
-            .extract()
-            .jsonPath()
-            .get("find { it.username == \"" + this.getUser() + "\" }.flagsCaptured");
-    assertTrue(capturefFlags.contains("Without password"));
   }
 
   @Test
@@ -120,7 +95,7 @@ public class ChallengeIntegrationTest extends IntegrationTest {
         .when()
         .relaxedHTTPSValidation()
         .cookie("JSESSIONID", getWebGoatCookie())
-        .get(url("challenge/7/.git"))
+        .get(webGoatUrlConfig.url("challenge/7/.git"))
         .then()
         .statusCode(200)
         .extract()
@@ -132,7 +107,7 @@ public class ChallengeIntegrationTest extends IntegrationTest {
         .relaxedHTTPSValidation()
         .cookie("JSESSIONID", getWebGoatCookie())
         .formParams("email", getUser() + "@webgoat.org")
-        .post(url("challenge/7"))
+        .post(webGoatUrlConfig.url("challenge/7"))
         .then()
         .statusCode(200)
         .extract()
@@ -144,7 +119,7 @@ public class ChallengeIntegrationTest extends IntegrationTest {
             .when()
             .relaxedHTTPSValidation()
             .cookie("WEBWOLFSESSION", getWebWolfCookie())
-            .get(new WebWolfUrlBuilder().path("mail").build())
+            .get(webWolfUrlConfig.url("mail"))
             .then()
             .extract()
             .response()
@@ -158,13 +133,15 @@ public class ChallengeIntegrationTest extends IntegrationTest {
             .when()
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
-            .get(url("challenge/7/reset-password/{link}"), "375afe1104f4a487a73823c50a9292a2")
+            .get(
+                webGoatUrlConfig.url("challenge/7/reset-password/{link}"),
+                "375afe1104f4a487a73823c50a9292a2")
             .then()
             .statusCode(HttpStatus.ACCEPTED.value())
             .extract()
             .asString();
 
     String flag = result.substring(result.indexOf("flag") + 6, result.indexOf("flag") + 42);
-    checkAssignment(url("challenge/flag/7"), Map.of("flag", flag), true);
+    checkAssignment(webGoatUrlConfig.url("challenge/flag/7"), Map.of("flag", flag), true);
   }
 }

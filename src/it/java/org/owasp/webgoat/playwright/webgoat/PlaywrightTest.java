@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2025 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.playwright.webgoat;
 
 import com.microsoft.playwright.Browser;
@@ -15,12 +19,17 @@ public class PlaywrightTest {
   public static class WebGoatOptions implements OptionsFactory {
     @Override
     public Options getOptions() {
-      return new Options().setHeadless(true).setContextOptions(getContextOptions());
+      return new Options()
+              .setHeadless(true)
+              .setContextOptions(getContextOptions());
     }
+
   }
 
   protected static Browser.NewContextOptions getContextOptions() {
-    return new Browser.NewContextOptions().setBaseURL(webGoatUrlConfig.getBaseUrl());
+    return new Browser.NewContextOptions()
+            .setLocale("en-US")
+            .setBaseURL(webGoatUrlConfig.getBaseUrl());
   }
 
   public static String webGoatUrl(String path) {

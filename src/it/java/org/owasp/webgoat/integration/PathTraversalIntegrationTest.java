@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2020 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.integration;
 
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -48,14 +52,14 @@ class PathTraversalIT extends IntegrationTest {
   }
 
   private void assignment1() throws IOException {
-    MatcherAssert.assertThat(
+      MatcherAssert.assertThat(
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
             .multiPart("uploadedFile", "test.jpg", Files.readAllBytes(fileToUpload.toPath()))
             .param("fullName", "../John Doe")
-            .post(url("PathTraversal/profile-upload"))
+            .post(webGoatUrlConfig.url("PathTraversal/profile-upload"))
             .then()
             .statusCode(200)
             .extract()
@@ -64,14 +68,14 @@ class PathTraversalIT extends IntegrationTest {
   }
 
   private void assignment2() throws IOException {
-    MatcherAssert.assertThat(
+      MatcherAssert.assertThat(
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
             .multiPart("uploadedFileFix", "test.jpg", Files.readAllBytes(fileToUpload.toPath()))
             .param("fullNameFix", "..././John Doe")
-            .post(url("PathTraversal/profile-upload-fix"))
+            .post(webGoatUrlConfig.url("PathTraversal/profile-upload-fix"))
             .then()
             .statusCode(200)
             .extract()
@@ -80,7 +84,7 @@ class PathTraversalIT extends IntegrationTest {
   }
 
   private void assignment3() throws IOException {
-    MatcherAssert.assertThat(
+      MatcherAssert.assertThat(
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
@@ -89,7 +93,7 @@ class PathTraversalIT extends IntegrationTest {
                 "uploadedFileRemoveUserInput",
                 "../test.jpg",
                 Files.readAllBytes(fileToUpload.toPath()))
-            .post(url("PathTraversal/profile-upload-remove-user-input"))
+            .post(webGoatUrlConfig.url("PathTraversal/profile-upload-remove-user-input"))
             .then()
             .statusCode(200)
             .extract()
@@ -99,18 +103,18 @@ class PathTraversalIT extends IntegrationTest {
 
   private void assignment4() throws IOException {
     var uri = "PathTraversal/random-picture?id=%2E%2E%2F%2E%2E%2Fpath-traversal-secret";
-    RestAssured.given()
+      RestAssured.given()
         .urlEncodingEnabled(false)
         .when()
         .relaxedHTTPSValidation()
         .cookie("JSESSIONID", getWebGoatCookie())
-        .get(url(uri))
+        .get(webGoatUrlConfig.url(uri))
         .then()
         .statusCode(200)
         .body(CoreMatchers.is("You found it submit the SHA-512 hash of your username as answer"));
 
-    checkAssignment(
-        url("PathTraversal/random"),
+      checkAssignment(
+              webGoatUrlConfig.url("PathTraversal/random"),
         Map.of("secret", Sha512DigestUtils.shaHex(this.getUser())),
         true);
   }
@@ -127,13 +131,13 @@ class PathTraversalIT extends IntegrationTest {
       zos.putNextEntry(e);
       zos.write("test".getBytes(StandardCharsets.UTF_8));
     }
-    MatcherAssert.assertThat(
+      MatcherAssert.assertThat(
         RestAssured.given()
             .when()
             .relaxedHTTPSValidation()
             .cookie("JSESSIONID", getWebGoatCookie())
             .multiPart("uploadedFileZipSlip", "upload.zip", Files.readAllBytes(zipFile.toPath()))
-            .post(url("PathTraversal/zip-slip"))
+            .post(webGoatUrlConfig.url("PathTraversal/zip-slip"))
             .then()
             .log()
             .all()

@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2022 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.container.service;
 
 import java.util.List;
@@ -14,11 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * LessonProgressService class.
- *
- * @author webgoat
- */
 @Controller
 @RequiredArgsConstructor
 public class LessonProgressService {

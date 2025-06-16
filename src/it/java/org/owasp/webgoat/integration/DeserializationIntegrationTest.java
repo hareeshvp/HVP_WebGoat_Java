@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2019 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.integration;
 
 import java.io.IOException;
@@ -26,7 +30,7 @@ public class DeserializationIntegrationTest extends IntegrationTest {
       params.put(
           "token", SerializationHelper.toString(new VulnerableTaskHolder("wait", "sleep 5")));
     }
-    checkAssignment(url("InsecureDeserialization/task"), params, true);
+      checkAssignment(webGoatUrlConfig.url("InsecureDeserialization/task"), params, true);
 
     checkResults("InsecureDeserialization");
   }

